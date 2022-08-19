@@ -1,12 +1,16 @@
 ﻿using FunctionalBank.WebApi.Controllers;
+using FunctionalBank.WebApi.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace FunctionalBank.WebApi;
 
-internal class DatabaseContext : DbContext
+public class DatabaseContext : DbContext
 {
-    public DbSet<BankAccountEntity> BankAccounts { get; set; }
+    public DbSet<AccountEntity> BankAccounts { get; set; }
+    public DbSet<UserEntity> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-        optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=FunctionalBank;User Id=user;Password=user");
+    public DatabaseContext(DbContextOptions<DatabaseContext> options):base(options)
+    {
+        
+    }
 }

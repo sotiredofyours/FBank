@@ -2,7 +2,7 @@
 
 namespace FunctionalBank.WebApi.Controllers;
 
-public class ReadBankAccountDto
+public class ReadAccountDto
 {
     /// <summary>
     /// BankAccount id.
@@ -28,31 +28,34 @@ public class ReadBankAccountDto
     public DateTime CreatedAt { get; set; }
 }
 
-public class CreateBankAccountDto
+public class CreateAccountDto
 {
     /// <summary>
-    /// Currency of account
+    /// Current balance on account.
     /// </summary>
     /// <example>RUB</example>
+    [Required]
     public double Balance { get; set; }
     
     /// <summary>
     /// Currency of account
     /// </summary>
     /// <example>RUB</example>
+    [Required]
     public string Currency { get; set; }
     
     /// <summary>
     /// Date of bank account creation 
     /// </summary>
     /// <example>5/1/2008 8:30:52 AM</example>
+    [Required]
     public DateTime CreatedAt { get; set; }
 }
 
-public class UpdateBankAccountDto
+public class UpdateAccountDto
 {
     /// <summary>
-    /// Currency of account
+    /// Current balance on account.
     /// </summary>
     /// <example>RUB</example>
     

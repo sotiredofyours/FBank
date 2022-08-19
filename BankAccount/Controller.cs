@@ -11,17 +11,19 @@ namespace FunctionalBank.WebApi.Controllers;
 [Route("/bankAccounts")]
 public class BankAccountController : ControllerBase
 {
-    private readonly DatabaseContext _context = new();
-    
+    private readonly DatabaseContext _context;
+    public BankAccountController(DatabaseContext context) =>
+        _context = context;
+   
     /// <summary>Retrieve all bank accounts. </summary>
     /// <response code="200">All bank accounts</response>
     
     [HttpGet]
-    [ProducesResponseType(typeof(ReadBankAccountDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ReadAccountDto[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllBankAccounts()
     {
         var bankAccounts = await _context.BankAccounts.ToListAsync();
-        var readDtos = bankAccounts.Select(bankAccount => new ReadBankAccountDto()
+        var readDtos = bankAccounts.Select(bankAccount => new ReadAccountDto()
         {
             Id = bankAccount.Id,
             Currency = bankAccount.Currency,
@@ -36,10 +38,10 @@ public class BankAccountController : ControllerBase
     /// <param name="createDto">Info of new bank account</param>
     /// <response code="200">Newly created bank account</response>
     [HttpPost]
-    [ProducesResponseType(typeof(ReadBankAccountDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> CreateMeetup([FromBody] CreateBankAccountDto createDto)
+    [ProducesResponseType(typeof(ReadAccountDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto createDto)
     {
-        var newBankAccount = new BankAccountEntity
+        var newBankAccount = new AccountEntity
         {
             Id = new Guid(),
             Balance = createDto.Balance,
@@ -49,7 +51,7 @@ public class BankAccountController : ControllerBase
         _context.BankAccounts.Add(newBankAccount);
         await _context.SaveChangesAsync();
 
-        var readDto = new ReadBankAccountDto
+        var readDto = new ReadAccountDto
         {
             Id = newBankAccount.Id,
             Balance = newBankAccount.Balance,
@@ -68,7 +70,7 @@ public class BankAccountController : ControllerBase
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateBankAccount([FromRoute] Guid id, [FromBody] UpdateBankAccountDto updatedMeetup)
+    public async Task<IActionResult> UpdateBankAccount([FromRoute] Guid id, [FromBody] UpdateAccountDto updatedMeetup)
     {
         var oldBankAccount = await _context.BankAccounts.FirstOrDefaultAsync(meetup => meetup.Id == id);
 
@@ -90,7 +92,7 @@ public class BankAccountController : ControllerBase
     /// <response code="200">Deleted bank account.</response>
     /// <response code="404">Bank account with specified id was not found.</response>
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(typeof(ReadBankAccountDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ReadAccountDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteMeetup([FromRoute] Guid id)
     {
@@ -104,7 +106,7 @@ public class BankAccountController : ControllerBase
         
         _context.BankAccounts.Remove(bankAccountToDelete);
         await _context.SaveChangesAsync();
-        var readDto = new ReadBankAccountDto
+        var readDto = new ReadAccountDto
         {
             Id = bankAccountToDelete.Id,
             Balance = bankAccountToDelete.Balance,
