@@ -1,36 +1,34 @@
 ﻿using System.Net.Mime;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 
-namespace FunctionalBank.WebApi.Controllers;
+namespace FunctionalBank.WebApi.Account;
 
 [ApiController]
 [Consumes(MediaTypeNames.Application.Json)]
 [Produces(MediaTypeNames.Application.Json)]
-[Route("/bankAccounts")]
+[Route("{id:guid}/bankAccounts")]
 public class BankAccountController : ControllerBase
 {
     private readonly DatabaseContext _context;
-    public BankAccountController(DatabaseContext context) =>
+    private readonly IMapper _mapper;
+    public BankAccountController(DatabaseContext context, IMapper mapper)
+    {
         _context = context;
-   
+        _mapper = mapper;
+    }
+
     /// <summary>Retrieve all bank accounts. </summary>
     /// <response code="200">All bank accounts</response>
     
     [HttpGet]
+ //   [Route("{id:guid}")]
     [ProducesResponseType(typeof(ReadAccountDto[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAllBankAccounts()
+    public async Task<IActionResult> GetAllBankAccounts([FromRoute] Guid id)
     {
-        var bankAccounts = await _context.BankAccounts.ToListAsync();
-        var readDtos = bankAccounts.Select(bankAccount => new ReadAccountDto()
-        {
-            Id = bankAccount.Id,
-            Currency = bankAccount.Currency,
-            Balance = bankAccount.Balance,
-            CreatedAt = bankAccount.CreatedAt
-        });
-
+        var bankAccounts = await _context.BankAccounts.Where(account => account.User.Id == id).ToListAsync();
+        var readDtos = _mapper.Map<ICollection<ReadAccountDto>>(bankAccounts);
         return Ok(readDtos);
     }
     
@@ -41,36 +39,21 @@ public class BankAccountController : ControllerBase
     [ProducesResponseType(typeof(ReadAccountDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto createDto)
     {
-        var newBankAccount = new AccountEntity
-        {
-            Id = new Guid(),
-            Balance = createDto.Balance,
-            Currency = createDto.Currency,
-            CreatedAt = createDto.CreatedAt
-        };
+        var newBankAccount = _mapper.Map<AccountEntity>(createDto);
         _context.BankAccounts.Add(newBankAccount);
         await _context.SaveChangesAsync();
-
-        var readDto = new ReadAccountDto
-        {
-            Id = newBankAccount.Id,
-            Balance = newBankAccount.Balance,
-            Currency = newBankAccount.Currency,
-            CreatedAt = newBankAccount.CreatedAt
-        };
-        
+        var readDto = _mapper.Map<ReadAccountDto>(newBankAccount);
         return Ok(readDto);
     }
-    
     
     /// <summary>Update info of bank account with matching id.</summary>
     /// <param name="id" example="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">Meetup id.</param>
     /// <response code="204">Updated info of bank account.</response>
     /// <response code="404">Bank account with specified id was not found.</response>
-    [HttpPut("{id:guid}")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateBankAccount([FromRoute] Guid id, [FromBody] UpdateAccountDto updatedMeetup)
+    public async Task<IActionResult> UpdateBankAccount([FromRoute] Guid id, [FromBody] UpdateAccountDto updatedAccount)
     {
         var oldBankAccount = await _context.BankAccounts.FirstOrDefaultAsync(meetup => meetup.Id == id);
 
@@ -79,11 +62,9 @@ public class BankAccountController : ControllerBase
             return NotFound();
         }
 
-        oldBankAccount.Balance = updatedMeetup.Balance;
-        oldBankAccount.Currency = updatedMeetup.Currency;
-        oldBankAccount.CreatedAt = updatedMeetup.CreatedAt;
+        oldBankAccount = _mapper.Map(updatedAccount, oldBankAccount);
         await _context.SaveChangesAsync();
-
+        
         return NoContent();
     }
 
@@ -91,10 +72,10 @@ public class BankAccountController : ControllerBase
     /// <param name="id" example="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">Meetup id.</param>
     /// <response code="200">Deleted bank account.</response>
     /// <response code="404">Bank account with specified id was not found.</response>
-    [HttpDelete("{id:guid}")]
+    [HttpDelete]
     [ProducesResponseType(typeof(ReadAccountDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteMeetup([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteAccount([FromRoute] Guid id)
     {
         var bankAccountToDelete
             = await _context.BankAccounts.FirstOrDefaultAsync(meetup => meetup.Id == id);
@@ -106,14 +87,7 @@ public class BankAccountController : ControllerBase
         
         _context.BankAccounts.Remove(bankAccountToDelete);
         await _context.SaveChangesAsync();
-        var readDto = new ReadAccountDto
-        {
-            Id = bankAccountToDelete.Id,
-            Balance = bankAccountToDelete.Balance,
-            Currency = bankAccountToDelete.Currency,
-            CreatedAt = bankAccountToDelete.CreatedAt
-        };
-        
+        var readDto = _mapper.Map<ReadAccountDto>(bankAccountToDelete);
         return Ok(readDto);
     }
 }

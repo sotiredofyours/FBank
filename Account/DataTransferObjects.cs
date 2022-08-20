@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FunctionalBank.WebApi.User;
 
-namespace FunctionalBank.WebApi.Controllers;
+namespace FunctionalBank.WebApi.Account;
 
 public class ReadAccountDto
 {
@@ -21,11 +22,9 @@ public class ReadAccountDto
     /// </summary>
     /// <example>RUB</example>
     public string Currency { get; set; }
-    /// <summary>
-    /// Date of bank account creation 
-    /// </summary>
-    /// <example>5/1/2008 8:30:52 AM</example>
-    public DateTime CreatedAt { get; set; }
+    
+    public UserEntity User { get; set; }
+
 }
 
 public class CreateAccountDto
@@ -43,13 +42,9 @@ public class CreateAccountDto
     /// <example>RUB</example>
     [Required]
     public string Currency { get; set; }
-    
-    /// <summary>
-    /// Date of bank account creation 
-    /// </summary>
-    /// <example>5/1/2008 8:30:52 AM</example>
     [Required]
-    public DateTime CreatedAt { get; set; }
+    public UserEntity User { get; set; }
+
 }
 
 public class UpdateAccountDto
@@ -66,15 +61,8 @@ public class UpdateAccountDto
     /// Currency of account
     /// </summary>
     /// <example>RUB</example>
-    [Required]
-    
+   [Required]
     public string Currency { get; set; }
     
-    /// <summary>
-    /// Date of bank account creation 
-    /// </summary>
-    /// <example>5/1/2008 8:30:52 AM</example>
-    
-    [Required]
-    public DateTime CreatedAt { get; set; }
+
 }
