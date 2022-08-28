@@ -1,18 +1,9 @@
-﻿using FunctionalBank.WebApi.User;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FunctionalBank.WebApi.Account;
+namespace FunctionalBank.WebApi.Features.Account.Entities;
 
-public class AccountEntity
-{
-    public Guid Id { get; set; }
-    public double Balance { get; set; }
-    public string Currency { get; set; }
-    
-    public UserEntity User { get; set; }
-}
-internal class MeetupEntityTypeConfiguration : IEntityTypeConfiguration<AccountEntity>
+internal class AccountEntityTypeConfiguration : IEntityTypeConfiguration<AccountEntity>
 {
     public void Configure(EntityTypeBuilder<AccountEntity> entity)
     {
@@ -21,7 +12,7 @@ internal class MeetupEntityTypeConfiguration : IEntityTypeConfiguration<AccountE
         entity
             .HasKey(account => account.Id)
             .HasName("pk_account");
-
+    
         entity
             .Property(account => account.Id)
             .HasColumnName("id");
@@ -33,7 +24,6 @@ internal class MeetupEntityTypeConfiguration : IEntityTypeConfiguration<AccountE
         entity
             .Property(account => account.Currency)
             .HasColumnName("currency");
-        entity
-            .HasOne(account => account.User);
+       
     }
 }

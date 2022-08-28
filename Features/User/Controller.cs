@@ -1,10 +1,13 @@
 ﻿using System.Net.Mime;
 using AutoMapper;
+using FunctionalBank.WebApi.Features.User.DataTransferObjects;
+using FunctionalBank.WebApi.Features.User.Entity;
+using FunctionalBank.WebApi.Features.User.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FunctionalBank.WebApi.User;
+namespace FunctionalBank.WebApi.Features.User;
 
 [ApiController]
 [Route("/users")]
@@ -17,11 +20,7 @@ public class UserController : ControllerBase
     private readonly JwtTokenHelper _tokenHelper;
     private readonly IMapper _mapper;
 
-    public UserController(
-        DatabaseContext context,
-        IConfiguration configuration,
-        JwtTokenHelper tokenHelper,
-        IMapper mapper)
+    public UserController(DatabaseContext context, IConfiguration configuration, JwtTokenHelper tokenHelper, IMapper mapper)
     {
         _context = context;
         _configuration = configuration;

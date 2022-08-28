@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using FunctionalBank.WebApi.Account;
+using FunctionalBank.WebApi.Features.Account.DataTransferObjects;
+using FunctionalBank.WebApi.Features.Account.Entities;
 
-namespace FunctionalBank.WebApi.BankAccount;
+namespace FunctionalBank.WebApi.Features.Account;
 
 public  class AccountMappingProfile : Profile
 {

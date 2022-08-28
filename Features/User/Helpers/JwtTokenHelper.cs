@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+using FunctionalBank.WebApi.Extensions;
 using Microsoft.IdentityModel.Tokens;
+
+namespace FunctionalBank.WebApi.Features.User.Helpers;
 
 public class JwtTokenHelper
 {
@@ -14,15 +16,9 @@ public class JwtTokenHelper
         _tokenHandler = new JwtSecurityTokenHandler();
         _tokenHandler.InboundClaimTypeMap.Clear();
         _tokenHandler.OutboundClaimTypeMap.Clear();
-
-        var jwtSecret = Encoding.ASCII.GetBytes(configuration["JwtAuth:Secret"]);
-        _securityKey = new SymmetricSecurityKey(jwtSecret);
-
-        var accessTokenLifetimeInMinutes = int.Parse(configuration["JwtAuth:AccessTokenLifetime"]);
-        _accessTokenLifetime = TimeSpan.FromMinutes(accessTokenLifetimeInMinutes);
-        
-        var refreshTokenLifetimeInDays = int.Parse(configuration["JwtAuth:RefreshTokenLifetime"]);
-        _refreshTokenLifetime = TimeSpan.FromMinutes(refreshTokenLifetimeInDays);
+        _securityKey = configuration.GetAuthSecret();
+        _accessTokenLifetime = configuration.GetAccessTokenLifetime();
+       _refreshTokenLifetime = configuration.GetRefreshTokenLifetime();
     }
     
     public IDictionary<string, string> ParseToken(string token)
@@ -84,6 +80,5 @@ public class JwtTokenHelper
 
         return encodedToken;
     }
-
-    public record TokenPair(string AccessToken, string RefreshToken);
+    
 }

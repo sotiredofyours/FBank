@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using FunctionalBank.WebApi.Account;
-using FunctionalBank.WebApi.User;
+using FunctionalBank.WebApi.Features.Account.Entities;
+using FunctionalBank.WebApi.Features.User.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FunctionalBank.WebApi;
 
 public class DatabaseContext : DbContext
 {
-    public DbSet<AccountEntity> BankAccounts { get; set; }
-    public DbSet<UserEntity> Users { get; set; }
-    
-    public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
+    public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
+    public DbSet<UserEntity> Users => Set<UserEntity>();
+    public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options):base(options)
     {
