@@ -22,13 +22,16 @@ internal class Startup
     public void ConfigureServices(IServiceCollection services) =>
     
         services
+            .AddCors()
             .AddSwagger()
             .AddJwtAuthentication(_configuration)
+            .AddDbContext(_configuration)
             .AddAutoMapper(Assembly.GetExecutingAssembly())
             .AddControllers();
     
     public void Configure(IApplicationBuilder application, IWebHostEnvironment environment) =>
         application
+            .UseCors(options => options.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader())
             .OnDevelopment(() => application.UseSwagger().UseSwaggerUI(), environment)
             .UseRouting()
             .UseAuthentication()

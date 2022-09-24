@@ -7,7 +7,7 @@ public class ConfigurationRefreshTokenEntity
 {
     public void Configure(EntityTypeBuilder<RefreshTokenEntity> entity)
     {
-        entity.ToTable("refresh_tokens");
+        entity.ToTable("refresh_tkens");
 
         entity
             .HasKey(refreshToken => refreshToken.Id)
