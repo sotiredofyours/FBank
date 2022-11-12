@@ -6,7 +6,7 @@ namespace FunctionalBank.WebApi.Extensions;
 public static class ConfigurationExtensions
 {
     public static string GetPosgreSqlConnectionString(this IConfiguration configuration) =>
-        configuration.GetConnectionString("PostgreSQL");
+        configuration.GetConnectionString("RemotePostgreSQL");
 
     public static SymmetricSecurityKey GetAuthSecret(this IConfiguration configuration)
     {
